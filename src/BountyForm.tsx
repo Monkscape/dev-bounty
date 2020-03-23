@@ -29,7 +29,7 @@ const BountyForm = ({submit}: BountyFormProps) => {
         setTitle('');
     }
 
-    const handleInput_description = (event: ChangeEvent<HTMLInputElement>) => {
+    const handleInput_description = (event: ChangeEvent<HTMLTextAreaElement>) => {
         setDescription(event.currentTarget.value)
     }
 
@@ -42,7 +42,7 @@ const BountyForm = ({submit}: BountyFormProps) => {
             <label htmlFor="title">Title:</label>
             <input type="text" id="title" onChange={handleInput_title} value={title}/>
             <label htmlFor="description">Description:</label>
-            <input type="text" id="description" onChange={handleInput_description} value={description}/>
+            <textarea id="description" onChange={handleInput_description} value={description}/>
             <button type='submit' onClick={onClick}>Submit</button>
         </div>
     )

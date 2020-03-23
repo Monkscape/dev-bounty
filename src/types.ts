@@ -8,3 +8,8 @@ export interface BountyObject {
     upvotes: number;
     status: 'COMPLETE' | 'REQUESTED';
 }
+
+export interface LeaderboardEntry {
+    user: string;
+    points: number;
+}
