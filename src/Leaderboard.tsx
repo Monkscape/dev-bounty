@@ -1,6 +1,6 @@
 import React from 'react'
 import { LeaderboardEntry } from './types'
-import { userInfo } from 'os'
+import {NavLink} from 'react-router-dom'
 
 interface LeaderboardProps {
     entries: LeaderboardEntry[];
@@ -9,9 +9,25 @@ interface LeaderboardProps {
 const Leaderboard = ({entries}: LeaderboardProps) => {
 
     let rank = 0;
+    let lastPoints: number = 0;
+
+    const calculateRank = (points: number) => {
+        let calculatedRank = rank;
+        if (points !== lastPoints) {
+            calculatedRank = ++rank;
+        }
+        lastPoints = points;
+        return rank;
+    }
 
     const mapEntryToRow = (entry: LeaderboardEntry) => {
-        return <tr id={entry.user}><td>{++rank}</td><td>{entry.user}</td><td>{entry.points}</td></tr>
+        return (
+            <tr id={entry.user}>
+                <td>{calculateRank(entry.points)}</td>
+                <td><NavLink to={`/bounties/completed/${entry.user}`}>{entry.user}</NavLink></td>
+                <td>{entry.points}</td>
+            </tr>
+        )
     }
 
     return (

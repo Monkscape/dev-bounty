@@ -22,6 +22,7 @@ const Bounty = ({bounty, upvote, complete}: BountyProps) => {
 
     const handleSubmitClick = () => {
         complete({...bounty, answer, answeredBy: 'nmille2', status: 'COMPLETE'})
+        setAnswer('')
     }
 
     const onAnswerChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
@@ -32,12 +33,16 @@ const Bounty = ({bounty, upvote, complete}: BountyProps) => {
         return (
             <div>
                 {getDetails()}
-                <textarea value={answer} onChange={onAnswerChange}/>
-                <button type='button' onClick={handleClick}>Minimize</button>
+                <label>
+                    Your Answer: 
+                    <textarea value={answer} onChange={onAnswerChange}/>
+                </label>
+                <button type='button' className="button is-primary" onClick={handleClick}>Minimize</button>
                 {(bounty.status === 'REQUESTED') 
                     ? <button type='button' onClick={handleSubmitClick}>Submit!</button>
                     : <></>
                 }
+                <button type='button' onClick={handleUpvoteClick}>^</button>
             </div>
         )
     }
@@ -49,7 +54,6 @@ const Bounty = ({bounty, upvote, complete}: BountyProps) => {
                 <h3>Reward: {bounty.upvotes} points</h3>
                 <p>Description: {bounty.description}</p>
                 <p>Requested by: {bounty.user}</p>
-                <button type='button' onClick={handleUpvoteClick}>^</button>
             </>
         );
     }
@@ -58,6 +62,7 @@ const Bounty = ({bounty, upvote, complete}: BountyProps) => {
         return (
             <>
                 <div onClick={handleClick}>{getDetails()}</div>
+                <button type='button' onClick={handleUpvoteClick}>^</button>
             </>
         )
     }
