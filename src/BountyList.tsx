@@ -3,6 +3,11 @@ import Bounty from './Bounty'
 import { BountyObject } from './types'
 import { useParams } from 'react-router-dom'
 import _ from 'lodash';
+import 'antd/dist/antd.css';
+import './index.css';
+import { Layout, Menu, Breadcrumb } from 'antd';
+
+const { Header, Content, Footer } = Layout;
 
 interface BountyListProps {
     content: BountyObject[];
@@ -31,9 +36,9 @@ const BountyList = ({content, updateBountyList}: BountyListProps) => {
     }
     
     return (
-        <div className="columns">
+        <Content>
             {getFilteredList().map(bounty => <Bounty bounty={bounty} upvote={upvote} complete={submit}/>)}
-        </div>
+        </Content>
     )
 }
 

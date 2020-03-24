@@ -9,7 +9,6 @@ function App() {
     <Router>
       <div className="App">
         <BountyManager />
-        <Button type="primary">test</Button>
       </div>
     </Router>
   );

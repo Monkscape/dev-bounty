@@ -1,4 +1,6 @@
 import React, { useState, ChangeEvent } from 'react'
+import {Card} from 'antd';
+import 'antd/dist/antd.css'
 import { BountyObject } from './types'
 
 interface BountyProps {
@@ -70,9 +72,12 @@ const Bounty = ({bounty, upvote, complete}: BountyProps) => {
     let displayView = (detailView) ? expandedView() : defaultView()
 
     return (
-        <>
+        <Card
+            title={"test"}
+            style={{width: 50}} 
+        >
             {(detailView) ? expandedView() : defaultView()}
-        </>
+        </Card>
     )
 }
 
