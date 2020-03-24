@@ -1,6 +1,7 @@
 import React from 'react'
 import { LeaderboardEntry } from './types'
 import {NavLink} from 'react-router-dom'
+import { Table } from 'antd';
 
 interface LeaderboardProps {
     entries: LeaderboardEntry[];
@@ -20,27 +21,40 @@ const Leaderboard = ({entries}: LeaderboardProps) => {
         return rank;
     }
 
-    const mapEntryToRow = (entry: LeaderboardEntry) => {
-        return (
-            <tr id={entry.user}>
-                <td>{calculateRank(entry.points)}</td>
-                <td><NavLink to={`/bounties/completed/${entry.user}`}>{entry.user}</NavLink></td>
-                <td>{entry.points}</td>
-            </tr>
-        )
-    }
+    const entriesWithRank = entries.map(entry => ({...entry, rank: calculateRank(entry.points)}));
+    console.log(entriesWithRank)
+
+    const columns = [
+        {
+            title: 'Rank #',
+            dataIndex: 'rank',
+            key: 'rank',
+            sorter: (a: LeaderboardEntry, b: LeaderboardEntry) => a.rank - b.rank
+        },
+        {
+            title: 'User',
+            dataIndex: 'user',
+            key: 'user',
+            render: (user: React.ReactNode) => <NavLink to={`/bounties/completed/${user}`}>{user}</NavLink>,
+            sorter: (a: LeaderboardEntry, b: LeaderboardEntry) => {
+                if (a.user < b.user)
+                    return -1
+                else if (a.user > b.user)
+                    return 1
+                else
+                    return 0;
+            }
+        },
+        {
+            title: 'Points',
+            dataIndex: 'points',
+            key: 'points',
+            sorter: (a: LeaderboardEntry, b: LeaderboardEntry) => a.points - b.points
+        }
+    ]
 
     return (
-        <table>
-            <thead>
-                <th>Rank #</th>
-                <th>User</th>
-                <th>Total Points</th>
-            </thead>
-            <tbody>
-                {entries.map(mapEntryToRow)}
-            </tbody>
-        </table>
+        <Table title={() => <h2>PI Leaderboard</h2>} dataSource={entriesWithRank} columns={columns}/>
     )
 }
 

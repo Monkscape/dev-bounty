@@ -20,6 +20,9 @@ const LinkToolbar = () => {
                 <NavLink to="/bounties/completed">Completed</NavLink>
             </Menu.Item>
             <Menu.Item>
+                <NavLink to="/bounties/presenting">Upcoming Presentations</NavLink>
+            </Menu.Item>
+            <Menu.Item>
                 <NavLink to="/bounties">All</NavLink>
             </Menu.Item>
             <Menu.Item>

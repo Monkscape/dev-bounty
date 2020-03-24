@@ -6,10 +6,13 @@ export interface BountyObject {
     answer?: string;
     answeredBy?: string;
     upvotes: number;
-    status: 'COMPLETE' | 'REQUESTED';
+    status: StatusType;
 }
+
+export type StatusType = 'COMPLETE' | 'REQUESTED' | 'PRESENTING';
 
 export interface LeaderboardEntry {
     user: string;
     points: number;
+    rank: number;
 }

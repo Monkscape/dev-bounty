@@ -17,8 +17,7 @@ export const data: BountyObject[] = [
         description: "JUnit5 has some great new features that would greatly speed up the writing of our unit tests, but I'm not sure what the best approach is to onboard it.",
         title: 'Migrating from JUnit4 to JUnit5',
         upvotes: 5,
-        answer: 'JUnit5 is awesome!  And the great part is that you actually can have it co-exist with JUnit4 tests!  Just supply the JUnit vintage and jupiter engines and gradle will \
-do the rest.',
+        answer: 'JUnit5 is awesome!  And the great part is that you actually can have it co-exist with JUnit4 tests!  Just supply the JUnit vintage and jupiter engines and gradle will do the rest.',
         answeredBy: 'nmille2',
         status: 'COMPLETE'
     },

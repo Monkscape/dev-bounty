@@ -20,12 +20,8 @@ const BountyList = ({content, updateBountyList}: BountyListProps) => {
 
     console.log(user)
 
-    const upvote = (bounty: BountyObject) => {
-        updateBountyList({...bounty, upvotes: bounty.upvotes + 1})
-    }
-
-    const submit = (bounty: BountyObject) => {
-        updateBountyList({...bounty, answer: bounty.answer, answeredBy: 'nmille2', status: 'COMPLETE'})
+    const handleUpdate = (bounty: BountyObject) => {
+        updateBountyList(bounty)
     }
 
     const getFilteredList = () => {
@@ -38,7 +34,7 @@ const BountyList = ({content, updateBountyList}: BountyListProps) => {
     return (
         <div className="site-card-wrapper">
             <Row gutter={16}>
-                {getFilteredList().map(bounty => <Bounty bounty={bounty} upvote={upvote} complete={submit}/>)}
+                {getFilteredList().map(bounty => <Bounty bounty={bounty} handleUpdate={handleUpdate}/>)}
             </Row>
         </div>
     )

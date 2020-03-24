@@ -2,16 +2,18 @@ import React, {useEffect, useState} from 'react'
 import BountyForm from './BountyForm'
 import BountyList from './BountyList'
 import _ from 'lodash';
-import { BountyObject } from './types'
+import { BountyObject, StatusType } from './types'
 import Leaderboard from './Leaderboard';
-import { Switch, Route, NavLink, useParams } from 'react-router-dom';
+import { Switch, Route, NavLink, useParams} from 'react-router-dom';
 import LinkToolbar from './LinkToolbar';
 import 'antd/dist/antd.css';
 import './index.css';
-import { Layout, Menu, Breadcrumb, PageHeader, Button } from 'antd';
+import { Layout, Menu, Breadcrumb, PageHeader, Button, Typography, Row  } from 'antd';
 import * as stubData from './stubData';
 
 const { Header, Content, Footer } = Layout;
+
+const { Title } = Typography;
 
 const UserHeader = () => {
     const {user} = useParams()
@@ -37,19 +39,19 @@ const BountyManager = () => {
         console.log(bounty)
     }
 
-    const filter = (filter: (bounty: BountyObject) => boolean) => _(bounties).filter(filter).value()
+    const filterOn = (status: StatusType) => (bounty: BountyObject) => bounty.status === status
 
-    const filterOnComplete = (bounty: BountyObject) => bounty.status === "COMPLETE"
-    const filterOnRequested = (bounty: BountyObject) => bounty.status === "REQUESTED"
+    const noFilter = (bounty: BountyObject) => true
 
     const getSortedList = (filterMethod: (bounty: BountyObject) => boolean) => {
-        return _(filter(filterMethod)).filter().sortBy('upvotes').reverse().value()
+        return _(bounties).filter(filterMethod).sortBy('upvotes').reverse().value()
     }
 
     const getLeaderboardData = () => {
         return _(bounties).groupBy('answeredBy').map((objs, key) => ({
             user: key,
-            points: _.sumBy(objs, 'upvotes')
+            points: _.sumBy(objs, 'upvotes'),
+            rank: 0
         })).sortBy('points').filter(entry => entry.user !== 'undefined').reverse().value()
     }
 
@@ -58,26 +60,31 @@ const BountyManager = () => {
             <Header title="test">
                 <LinkToolbar/>
             </Header>
-            <PageHeader title="Developer Bounty"/>
+            <Title style={{margin: 15}}>Developer Bounty</Title>
             <Switch>
                 <Route path="/bounties/completed/:user">
                     <Content style={{padding: '0 50px'}}>
                         <UserHeader />
-                        <BountyList content={getSortedList(filterOnComplete)} updateBountyList={updateBountyList}/>
+                        <BountyList content={getSortedList(filterOn('COMPLETE'))} updateBountyList={updateBountyList}/>
                         <Button type="primary">
                             <NavLink to="/leaderboard">Return</NavLink>
                         </Button>
                     </Content>
                     </Route>
                     <Route path="/bounties/requested">
-                        <BountyForm submit={addBountyToList}/>
-                        <BountyList content={getSortedList(filterOnRequested)} updateBountyList={updateBountyList}/>
+                        <Row gutter={16} justify='center'>
+                            <BountyForm submit={addBountyToList}/>
+                        </Row>
+                        <BountyList content={getSortedList(filterOn('REQUESTED'))} updateBountyList={updateBountyList}/>
                     </Route>
                     <Route path="/bounties/completed">
-                        <BountyList content={getSortedList(filterOnComplete)} updateBountyList={updateBountyList}/>
+                        <BountyList content={getSortedList(filterOn('COMPLETE'))} updateBountyList={updateBountyList}/>
+                    </Route>
+                    <Route path="/bounties/presenting">
+                        <BountyList content={getSortedList(filterOn('PRESENTING'))} updateBountyList={updateBountyList}/>
                     </Route>
                     <Route path="/bounties">
-                        <BountyList content={getSortedList(bounty => true)} updateBountyList={updateBountyList}/>
+                        <BountyList content={getSortedList(noFilter)} updateBountyList={updateBountyList}/>
                     </Route>
                     <Route path="/leaderboard">
                         <Leaderboard entries={getLeaderboardData()}/>
