@@ -48,7 +48,7 @@ const BountyManager = () => {
     }
 
     const getLeaderboardData = () => {
-        return _(bounties).groupBy('answeredBy').map((objs, key) => ({
+        return _(bounties).groupBy('claimedBy').map((objs, key) => ({
             user: key,
             points: _.sumBy(objs, 'upvotes'),
             rank: 0
@@ -72,9 +72,7 @@ const BountyManager = () => {
                     </Content>
                     </Route>
                     <Route path="/bounties/requested">
-                        <Row gutter={16} justify='center'>
-                            <BountyForm submit={addBountyToList}/>
-                        </Row>
+                        <BountyForm submit={addBountyToList}/>
                         <BountyList content={getSortedList(filterOn('REQUESTED'))} updateBountyList={updateBountyList}/>
                     </Route>
                     <Route path="/bounties/completed">

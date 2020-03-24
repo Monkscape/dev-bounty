@@ -1,9 +1,12 @@
 import React, { useState, ChangeEvent, useEffect } from 'react'
-import {Card, Col, Button, Form, Input, Typography} from 'antd';
+import {Card, Col, Button, Form, Input, Typography, Select} from 'antd';
 import 'antd/dist/antd.css'
+import _ from 'lodash';
 import { BountyObject } from './types'
 
 const { Paragraph, Title, Text } = Typography;
+
+const { Option } = Select;
 
 interface BountyProps {
     bounty: BountyObject;
@@ -12,8 +15,12 @@ interface BountyProps {
 
 const Bounty = ({bounty, handleUpdate}: BountyProps) => {
 
+    const submittedUserArray = _(bounty.answer).map(answer => answer.user).uniq().value()
+
     let [activeTab, setActiveTab] = useState<'problem'|'answer'>('problem')
-    let [answer, setAnswer] = useState((typeof bounty.answer !== 'undefined') ? bounty.answer : '')
+    let [answer, setAnswer] = useState('')
+    let [winner, setWinner] = useState('')
+    let [selectError, setSelectError] = useState(false)
 
     useEffect(() => console.log(`Constructing card for ${bounty.id}`)
     , [])
@@ -33,9 +40,19 @@ const Bounty = ({bounty, handleUpdate}: BountyProps) => {
     }
 
     const handleAnswerClick = () => {
-        handleUpdate({...bounty, answer, answeredBy: 'nmille2', status: 'COMPLETE'})
+        handleUpdate({...bounty, answer: [...bounty.answer, {answer, user: 'nmille2'}]})
         setAnswer('')
-        setActiveTab('problem')
+        setActiveTab('answer')
+    }
+
+    const handleCompletionClick = () => {
+        if (winner !== '') {
+            handleUpdate({...bounty, claimedBy: winner, status: 'COMPLETE'})
+            setAnswer('')
+            setActiveTab('problem')
+        } else {
+            setSelectError(true)
+        }
     }
 
     const handleCOPClick = () => {
@@ -44,6 +61,10 @@ const Bounty = ({bounty, handleUpdate}: BountyProps) => {
 
     const onAnswerChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
         setAnswer(event.target.value)
+    }
+
+    const onWinnerChange = (value: string) => {
+        setWinner(value)
     }
 
     const submissionView = () => {
@@ -56,6 +77,14 @@ const Bounty = ({bounty, handleUpdate}: BountyProps) => {
                     <Form.Item>
                         <Button type='default' onClick={handleAnswerClick}>Answer</Button>
                     </Form.Item>
+                    <Form.Item label="Best Answer" hasFeedback validateStatus={(selectError) ? "error" : ""}>
+                        <Select onChange={onWinnerChange}>
+                            {submittedUserArray.map(user => <Option value={user}>{user}</Option>)}
+                        </Select>
+                    </Form.Item>
+                    <Form.Item>
+                        <Button type='default' onClick={handleCompletionClick}>Close</Button>
+                    </Form.Item>
                 </Form>
             </div>
         )
@@ -63,10 +92,10 @@ const Bounty = ({bounty, handleUpdate}: BountyProps) => {
 
     const showAnswer = () => {
         return (
-            <>
-                <Title level={4}>Answer by {bounty.answeredBy}</Title>
-                <Paragraph ellipsis={{rows: 2, expandable: true}} style={{textAlign: 'left'}}>{bounty.answer}</Paragraph>
-            </>
+            bounty.answer.map(answer => <>
+                <Title level={4}>{(answer.user === bounty.claimedBy) ? 'Claimed' : 'Answer'} by {answer.user}</Title>
+                <Paragraph ellipsis={{rows: 2, expandable: true}} style={{textAlign: 'left'}}>{answer.answer}</Paragraph>
+            </>)
         )
     }
 
@@ -79,7 +108,7 @@ const Bounty = ({bounty, handleUpdate}: BountyProps) => {
         return (
             <>
                 <p>Requested by: {bounty.user}</p>
-                {(typeof bounty.answeredBy !== 'undefined') ? <p>Answered by: {bounty.answeredBy}</p> : <></>}
+                {(typeof bounty.claimedBy !== 'undefined') ? <p>Claimed by: {bounty.claimedBy}</p> : <></>}
             </>
         )
     }
@@ -93,7 +122,7 @@ const Bounty = ({bounty, handleUpdate}: BountyProps) => {
 
     const contentList = {
         problem: problem(),
-        answer: (bounty.status === 'REQUESTED') ? submissionView() : showAnswer()
+        answer: <>{showAnswer()}{(bounty.status === 'REQUESTED') ? submissionView() : <></>}</>
     }
 
     return (

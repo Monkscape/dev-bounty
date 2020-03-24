@@ -19,7 +19,7 @@ const BountyForm = ({submit}: BountyFormProps) => {
             user,
             description,
             title,
-            answer: '',
+            answer: [],
             upvotes: 0,
             status: 'REQUESTED'
         })

@@ -28,7 +28,7 @@ const BountyList = ({content, updateBountyList}: BountyListProps) => {
         if (typeof user === 'undefined') 
             return content;
         else
-            return _(content).filter(bounty => bounty.answeredBy === user).value()
+            return _(content).filter(bounty => bounty.claimedBy === user).value()
     }
     
     return (
