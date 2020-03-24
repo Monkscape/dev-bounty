@@ -21,6 +21,7 @@ const Bounty = ({bounty, handleUpdate}: BountyProps) => {
     let [answer, setAnswer] = useState('')
     let [winner, setWinner] = useState('')
     let [selectError, setSelectError] = useState(false)
+    let [answerError, setAnswerError] = useState(false)
 
     useEffect(() => console.log(`Constructing card for ${bounty.id}`)
     , [])
@@ -40,9 +41,14 @@ const Bounty = ({bounty, handleUpdate}: BountyProps) => {
     }
 
     const handleAnswerClick = () => {
-        handleUpdate({...bounty, answer: [...bounty.answer, {answer, user: 'nmille2'}]})
-        setAnswer('')
-        setActiveTab('answer')
+        if (answer !== '') {
+            handleUpdate({...bounty, answer: [...bounty.answer, {answer, user: 'nmille2'}]})
+            setAnswer('')
+            setAnswerError(false)
+            // setActiveTab('answer')
+        } else {
+            setAnswerError(true)
+        }
     }
 
     const handleCompletionClick = () => {
@@ -71,7 +77,7 @@ const Bounty = ({bounty, handleUpdate}: BountyProps) => {
         return (
             <div>
                 <Form>
-                    <Form.Item>
+                    <Form.Item hasFeedback validateStatus={(answerError) ? "error" : ""}>
                         <Input.TextArea rows={5} value={answer} onChange={onAnswerChange}></Input.TextArea>
                     </Form.Item>
                     <Form.Item>
