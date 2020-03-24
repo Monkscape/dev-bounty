@@ -1,4 +1,4 @@
-import React, { useState, ChangeEvent } from 'react'
+import React, { useState, ChangeEvent, useEffect } from 'react'
 import {Card, Col, Button, Form, Input} from 'antd';
 import 'antd/dist/antd.css'
 import { BountyObject } from './types'
@@ -12,7 +12,10 @@ interface BountyProps {
 const Bounty = ({bounty, upvote, complete}: BountyProps) => {
 
     let [activeTab, setActiveTab] = useState<'problem'|'answer'>('problem')
-    let [answer, setAnswer] = useState(bounty.answer)
+    let [answer, setAnswer] = useState((typeof bounty.answer !== 'undefined') ? bounty.answer : '')
+
+    useEffect(() => console.log(`Constructing card for ${bounty.id}`)
+    , [])
 
     const tabList: {key: 'problem' | 'answer', tab: 'problem' | 'answer'}[] = [
         {
@@ -31,6 +34,7 @@ const Bounty = ({bounty, upvote, complete}: BountyProps) => {
     const handleSubmitClick = () => {
         complete({...bounty, answer, answeredBy: 'nmille2', status: 'COMPLETE'})
         setAnswer('')
+        setActiveTab('problem')
     }
 
     const onAnswerChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
@@ -42,7 +46,7 @@ const Bounty = ({bounty, upvote, complete}: BountyProps) => {
             <div>
                 <Form>
                     <Form.Item>
-                        <Input.TextArea value={answer} onChange={onAnswerChange}></Input.TextArea>
+                        <Input.TextArea rows={5} value={answer} onChange={onAnswerChange}></Input.TextArea>
                     </Form.Item>
                     <Form.Item>
                         <Button type='default' onClick={handleSubmitClick} disabled={(bounty.status === 'COMPLETE')}>Answer</Button>
@@ -89,7 +93,7 @@ const Bounty = ({bounty, upvote, complete}: BountyProps) => {
             style={{margin: "2.5%"}}
         >
             <h3>Reward: {bounty.upvotes} points</h3>
-            <p>{bounty.description}</p>
+            <p style={{textAlign: "left"}}>{bounty.description}</p>
             {contentList[activeTab]}
             {DisplayButton()}
         </Card>
