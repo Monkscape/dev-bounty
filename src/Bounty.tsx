@@ -1,5 +1,5 @@
 import React, { useState, ChangeEvent } from 'react'
-import {Card} from 'antd';
+import {Card, Col, Button, Form, Input} from 'antd';
 import 'antd/dist/antd.css'
 import { BountyObject } from './types'
 
@@ -11,13 +11,19 @@ interface BountyProps {
 
 const Bounty = ({bounty, upvote, complete}: BountyProps) => {
 
-    let [detailView, setDetailView] = useState(false)
+    let [activeTab, setActiveTab] = useState<'problem'|'answer'>('problem')
     let [answer, setAnswer] = useState(bounty.answer)
 
-    const handleClick = () => {
-        setDetailView(!detailView)
-    }
-
+    const tabList: {key: 'problem' | 'answer', tab: 'problem' | 'answer'}[] = [
+        {
+            key: 'problem',
+            tab: 'problem'
+        },
+        {
+            key: 'answer',
+            tab: 'answer'
+        }
+    ]
     const handleUpvoteClick = () => {
         upvote(bounty)
     }
@@ -34,50 +40,60 @@ const Bounty = ({bounty, upvote, complete}: BountyProps) => {
     const expandedView = () => {
         return (
             <div>
-                {getDetails()}
-                <label>
-                    Your Answer: 
-                    <textarea value={answer} onChange={onAnswerChange}/>
-                </label>
-                <button type='button' className="button is-primary" onClick={handleClick}>Minimize</button>
-                {(bounty.status === 'REQUESTED') 
-                    ? <button type='button' onClick={handleSubmitClick}>Submit!</button>
-                    : <></>
-                }
-                <button type='button' onClick={handleUpvoteClick}>^</button>
+                <Form>
+                    <Form.Item>
+                        <Input.TextArea value={answer} onChange={onAnswerChange}></Input.TextArea>
+                    </Form.Item>
+                    <Form.Item>
+                        <Button type='default' onClick={handleSubmitClick} disabled={(bounty.status === 'COMPLETE')}>Answer</Button>
+                    </Form.Item>
+                </Form>
             </div>
         )
     }
 
-    const getDetails = () => {
-        return (
-            <>
-                <h2>Title: {bounty.title}</h2>
-                <h3>Reward: {bounty.upvotes} points</h3>
-                <p>Description: {bounty.description}</p>
-                <p>Requested by: {bounty.user}</p>
-            </>
-        );
+    const setTab = (tab: string) => {
+        if (tab === 'answer' || tab === 'problem')
+            setActiveTab(tab)
     }
 
-    const defaultView = () => {
+    const problem = () => {
         return (
             <>
-                <div onClick={handleClick}>{getDetails()}</div>
-                <button type='button' onClick={handleUpvoteClick}>^</button>
+                <p>Requested by: {bounty.user}</p>
+                {(typeof bounty.answeredBy !== 'undefined') ? <p>Answered by: {bounty.answeredBy}</p> : <></>}
             </>
         )
     }
 
-    let displayView = (detailView) ? expandedView() : defaultView()
+    const DisplayButton = () => 
+        ((bounty.status === 'COMPLETE') 
+            ? <Button type='default'>Add to COP</Button>
+            : <Button type='primary' onClick={handleUpvoteClick}>Boost</Button>)
+        
+    
+
+    const contentList = {
+        problem: problem(),
+        answer: expandedView()
+    }
 
     return (
+        <Col span={8}>
         <Card
-            title={"test"}
-            style={{width: 50}} 
+            hoverable
+            title={bounty.title}
+            tabList={tabList}
+            activeTabKey={activeTab}
+            onTabChange={key => setTab(key)}
+            style={{margin: "2.5%"}}
         >
-            {(detailView) ? expandedView() : defaultView()}
+            <h3>Reward: {bounty.upvotes} points</h3>
+            <p>{bounty.description}</p>
+            {contentList[activeTab]}
+            {DisplayButton()}
         </Card>
+        </Col>
     )
 }
 

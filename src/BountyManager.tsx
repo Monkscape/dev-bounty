@@ -8,7 +8,7 @@ import { Switch, Route, NavLink, useParams } from 'react-router-dom';
 import LinkToolbar from './LinkToolbar';
 import 'antd/dist/antd.css';
 import './index.css';
-import { Layout, Menu, Breadcrumb } from 'antd';
+import { Layout, Menu, Breadcrumb, PageHeader, Button } from 'antd';
 
 const { Header, Content, Footer } = Layout;
 
@@ -16,8 +16,8 @@ const data: BountyObject[] = [
     {
         id: 1,
         user: 'nmille2',
-        description: 'Test',
-        title: 'Test',
+        description: '',
+        title: 'Setup Redis Cache for Local Testing',
         upvotes: 6,
         answer: 'LOL NO',
         answeredBy: 'jkumar2',
@@ -102,17 +102,20 @@ const BountyManager = () => {
     }
 
     return (
-        <Layout className="layout">
-            <Header>
+        <Layout className="layout" style={{height: '100%'}}>
+            <Header title="test">
                 <LinkToolbar/>
-                <h1>Developer Bounties</h1>
             </Header>
+            <PageHeader title="Developer Bounty"/>
             <Switch>
-                <Content style={{padding: '0 50px'}}>
-                    <Route path="/bounties/completed/:user">
+                <Route path="/bounties/completed/:user">
+                    <Content style={{padding: '0 50px'}}>
                         <UserHeader />
                         <BountyList content={getSortedList(filterOnComplete)} updateBountyList={updateBountyList}/>
-                        <NavLink to="/leaderboard">Return</NavLink>
+                        <Button type="primary">
+                            <NavLink to="/leaderboard">Return</NavLink>
+                        </Button>
+                    </Content>
                     </Route>
                     <Route path="/bounties/requested">
                         <BountyForm submit={addBountyToList}/>
@@ -127,8 +130,8 @@ const BountyManager = () => {
                     <Route path="/leaderboard">
                         <Leaderboard entries={getLeaderboardData()}/>
                     </Route>
-                </Content>
             </Switch>
+            <Footer style={{textAlign: "center"}}>Discover ©2020</Footer>
         </Layout>
     )
 }

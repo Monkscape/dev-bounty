@@ -5,7 +5,7 @@ import { useParams } from 'react-router-dom'
 import _ from 'lodash';
 import 'antd/dist/antd.css';
 import './index.css';
-import { Layout, Menu, Breadcrumb } from 'antd';
+import { Layout, Menu, Breadcrumb, Row } from 'antd';
 
 const { Header, Content, Footer } = Layout;
 
@@ -36,9 +36,11 @@ const BountyList = ({content, updateBountyList}: BountyListProps) => {
     }
     
     return (
-        <Content>
-            {getFilteredList().map(bounty => <Bounty bounty={bounty} upvote={upvote} complete={submit}/>)}
-        </Content>
+        <div className="site-card-wrapper">
+            <Row gutter={16}>
+                {getFilteredList().map(bounty => <Bounty bounty={bounty} upvote={upvote} complete={submit}/>)}
+            </Row>
+        </div>
     )
 }
 
